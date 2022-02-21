@@ -1,0 +1,946 @@
+Roger H Hayden III
+2/10/2022
+
+Department Store Data
+-----------------------------
+============================
+*Select Statements*
+=============================
+
+SELECT *
+FROM employees 
+WHERE department = 'Furniture';
+
+SLECT * 
+FROM employees
+WHERE department LIKE '%nitu%';
+
+SELECT *
+FROM employees 
+WHERE salary > 100000;
+
+SELECT * 
+FROM employees
+WHERE salary <= 100000;
+
+==========================
+WHERE, AND, OR
+==========================
+
+SELECT * 
+FROM employees
+WHERE department = 'Clothing'
+AND salary > 90000
+AND region_id = 2;
+
+SELECT *
+FROM employees
+WHERE department = 'Clothing'
+OR salary > 90000;
+
+//Begin
+//Below are the same 2 statements but that addition of the parenthesis changes
+//the meaning of the conditionals due to grouping differently.
+SELECT * 
+FROM employees 
+WHERE salary < 40000
+AND department = 'Clothing'
+OR department = 'Pharmacy'; 
+
+SELECT * 
+FROM employees 
+WHERE salary < 40000
+AND (department = 'Clothing'
+OR department = 'Pharmacy'); 
+// END
+
+//Not possible because each cell only contains one department
+SELECT *
+FROM employees
+WHERE department = 'Sports' AND department = 'Tools';
+
+//You can do
+SELECT *
+FROM employees
+WHERE department = 'Sports' OR department = 'Tools';
+
+===============================
+IN, NOT IN, IS NULL, BETWEEN
+===============================
+
+//WHERE NOT is the same as != (not equal) and <> (not equals)
+SELECT *
+FROM employees WHERE NOT dempartment = 'Sports';
+
+SELECT *
+FROM employees != dempartment = 'Sports';
+
+SELECT *
+FROM employees != dempartment <> 'Sports';
+
+//Returns nothing because NULL is nothing so it does not know it is NULL
+//NULL is not equal to NULL
+SELECT * 
+FROM employees
+WHERE email = NULL;
+
+//All employees that HAVE emails
+SELECT *
+FROM employees
+WHERE NOT email IS NULL;
+
+//Longer way of filtering for specific values
+SELECT *
+FROM employees
+WHERE department = 'Sports'
+OR department = 'First Aid'
+OR department = 'Toys'
+OR department = 'garden';
+
+//Shorter way to filter
+SELECT *
+FROM employees
+WHERE department IN ('Sports', 'First Aid', 'Toys', 'garden');
+
+SELECT *
+FROM employees
+WHERE salary BETWEEN 80000 AND 100000;
+
+===================================
+WHERE Clause and Operators
+===================================
+
+//Return name and email for Female employees that work in tools and have salary > 110,000
+SELECT first_name, email
+FROM employees
+WHERE gender = 'Female'
+AND department = 'Tools'
+AND salary > 110000;
+
+//Return first name and hire date for employees who's salary > 165,000, work in sports, and are Male
+SELECT first_name, hire_date
+FROM employees
+WHERE salary > 165000
+AND department = 'Sports'
+AND gender = 'Male';
+
+
+//Looking at hire dates for employees
+SELECT first_name, hire_date
+FROM employees
+WHERE hire_date BETWEEN '2002-01-01' AND '2004-01-01';
+
+====================================
+ORDER BY, LIMIT, DISTINCT
+===================================
+
+SELECT * 
+FROM employees 
+ORDER BY employee_id
+
+//Descending
+SELECT * 
+FROM employees 
+ORDER BY employee_id DESC
+
+//Collects everything in select statement and names salary column yearly salary
+SELECT first_name, last_name, department, salary as 'Yearly Salary'
+FROM employees
+
+==========================================================================
+UPPER(), LOWER(), LENGTH(), TRIM(), Boolean Expressions and Concatenation
+===========================================================================
+
+//UPPER() returns text in upper case
+SELECT UPPER(first_name)
+FROM employees;
+
+//LOWER() returns text in lower case
+SELECT UPPER(first_name), LOWER(department)
+FROM employees;
+
+//TRIM() trims extra space away 
+SELECT TRIM('             Hello There    ');
+
+//LENGTH() gives you the character count
+SELECT LENGTH(TRIM('             Hello There    '));
+
+//Here we are using pipes || which are used to combine values of 2 columns together.
+//This will put first and last name together (concatenation) with no space inbetween
+SELECT first_name || last_name
+FROM employees;
+
+//Adds a space inbetween first and last name and names the column full_name
+SELECT first_name || ' ' || last_name full_name
+FROM employees;
+
+//Returns full name column and a True or False if that person makes more than 140000
+SELECT first_name || ' ' || last_name full_name, (salary > 140000)
+FROM employees;
+
+//Same as above but ordered by salary descending
+SELECT first_name || ' ' || last_name full_name, (salary > 140000)
+FROM employees
+ORDER BY salary DESC;
+
+//Selects department column then add a column that shows True or False if the department is clothing
+SELECT department, ('Clothing' IN (department))
+FROM employees;
+
+===============================================
+SUBSTRING(), REPLACE(), POSITION(), COALESCE()
+===============================================
+
+//Makes a once cell column that contains 'This is test data'
+SELECT 'This is test data' test_data;
+
+//This pulls 4 index spots and in this case it returns 'test'
+SELECT SUBSTRING('This is test data' FROM 9 FOR 4) test_data-extracted;
+
+//Returns department name column and then a motified_data column with the name changes
+SELECT department, REPLACE(department, 'Clothing', 'Attire') modified_data
+FROM department;
+
+//When you make a column header with spaces you need to use double quotes
+//This adds another column that adds the word department after the department types
+SELECT department, 
+REPLACE(department, 'Clothing', 'Attire') modified_data
+department || 'department' AS "Complete Department Name"
+FROM department;
+
+//Gives index of the @ sign for each email
+SELECT POSTION('@' IN email)
+FROM employees;
+
+//This does the same as above but then also extracts the domain names after the @
+SELECT SUBSTRING(email, POSTION('@' IN email))
+FROM employees;
+
+//Same as above but it extracts the @ as well
+SELECT SUBSTRING(email, POSTION('@' IN email)+1)
+FROM employees;
+
+//Any time there was an email that was empty or NULL this added the word NONE
+SELECT COALESCE(email, 'NONE') as email
+FROM employees;
+
+==============================================
+MIN(), MAX(), AVG(), SUM(), COUNT()
+==============================================
+
+//Average salary
+SELECT AVG(salary)
+FROM employees;
+
+//Rounded average salary
+SELECT ROUND(AVG(salary))
+FROM employees;
+
+//Counting the number of employees based off the id column
+SELECT COUNT(employee_id)
+FROM employees;
+
+//Total Count of employees
+SELECT COUNT(*)
+FROM employees;
+
+//Sum of salaries in clothing department
+SELECT SUM(salary)
+FROM employees
+WHERE department = 'Clothing';
+
+=============================
+GROUP BY and HAVING
+=============================
+
+//Just filled in the WHERE with = so we can add a GROUP BY
+SELECT SUM(salary)
+FROM employees
+WHERE 1=1
+GROUP BY department;
+
+SELECT department, COUNT(*)
+FROM employees
+GROUP BY department;
+
+//Creating an avg, max, and min salary for each department 
+SELECT department, COUNT(*) total_number_employues, 
+ROUND(AVG(salary)) avg.sal, MIN(salary) min_sal,
+MAX(salary) max_sal,
+FROM employees
+GROUP BY department
+ORDER BY total_number_employees DESC;
+
+//HAVING comes before ORDER BY and after GROUP BY
+//This does not work, we need to use HAVING
+SELECT department, COUNT(*)
+WHERE COUNT(*) > 35
+GROUP BY department
+ORDER BY department;
+
+//This does work
+//HAVING is for filtering grouped data
+SELECT department, COUNT(*)
+GROUP BY department
+HAVING COUNT(*) > 35
+ORDER BY department;
+
+//Getting people with the same first name
+SELECT first_name, COUNT(*)
+FROM employees
+GROUP BY first_name
+HAVING COUNT(*) > 1;
+
+//Getting people with same email domain
+SELECT SUBSTRING(email, POSITION('@' IN email) + 1) AS email_domain, COUNT(*)
+FROM employees
+GROUP BY SUBSTRING(email, POSITION('@' IN email) + 1);
+
+//Looking at salary by gender and region
+SELECT gender, region_id, MIN(salary), MAX(salary), ROUND(AVG(salary))
+FROM employees
+GROUP BY gender, region_id
+ORDER BY gender DESC, region_id ASC;
+
+=========================
+Aliasing
+=================
+
+//Picking departments from the employee table
+SELECT employee.department
+FROM employees, departments;
+
+//Picking departments from the department table
+SELECT department.department
+FROM employees, departments;
+
+//If you use letters with the column names you can call just the letters
+SELECT e.department
+FROM employees e, department d;
+
+=======================
+Subqueries
+====================
+
+//This itself returns nothing because DEPART1 to 3 do not exist
+SELECT *
+FROM employees
+WHERE department NOT IN ('DEPART1', 'DEPART2','DEPART3');
+
+//This will return something like ('Sports', 'Tools',...) as a list of departments
+//These will be departments that exist in the employee table and not the department table
+SELECT *
+FROM employees
+WHERE department NOT IN (SELECT departmenmt FROM departments);
+
+//This does not work
+SELECT * 
+FROM (SELECT * FROM employees WHERE salary > 150000);
+
+//If you assisgn aliases then this works
+SELECT a.first_name, a.salary
+FROM (SELECT * FROM employees WHERE salary > 150000) a;
+
+//Can also do this
+//This will return employee name and their yearly salary
+SELECT a.first_name, a.salary
+FROM (SELECT first_name employee_name, salary yearly_salary
+	FROM employees WHERE salary > 150000) a;
+
+//Returning all the departments that are in both the department and employee tables
+SELECT *
+FROM employees
+WHERE department IN (SELECT department FROM departments);
+
+//Here we are using aliasing again and we can choose what tables we want to use for 
+//each subquery
+SELECT *
+FROM (SELECT department FROM departments) a;
+
+//Filter for all employee data for employees in the electronics division
+SELECT * 
+FROM employees
+WHERE department IN (SELECT department FROM departments WHERE division = 'Electronics');
+
+//Returns all employee data for employees who have a salary > 150000 and have region id's 
+//that are related to Asia or Canada
+SELECT *
+FROM employees 
+WHERE salary > 130000
+AND region_id IN (SELECT region_id FROM regions
+	             WHERE country = 'Asia' or country = 'Canada');
+
+//Can also do the subquery WHERE clause this way
+SELECT *
+FROM employees 
+WHERE salary > 130000
+AND region_id IN (SELECT region_id FROM regions
+	             WHERE country IN ('Asia', 'Canada'));
+
+//Returns employee name, department, salary, and a max salary column
+//by the Asia and Canada countries
+SELECT first_name, department, salary (SELECT MAX(salary) FROM employees),
+(SELECT MAX (salary) FROM employees) - salary
+FROM employees 
+WHERE region_id IN (SELECT region_id FROM regions WHERE country IN ('Asia', 'Canada'));
+
+//Selecting all employees and employee data that have a region id affiliated with the US
+SELECT * FROM employees
+WHERE region_id IN (SELECT region_id FROM regions WHERE country = 'United States');
+
+//Selecting all employees and employee data from those who have a region id greater the the US id
+//ANY isnt great to use, ALL is usually better
+SELECT * FROM employees
+WHERE region_id > ANY(SELECT region_id FROM regions WHERE country = 'United States');
+
+//Same statement with ALL
+SELECT * FROM employees
+WHERE region_id > ALL(SELECT region_id FROM regions WHERE country = 'United States');
+
+//Return employee and employee data for those who work in kids with the dates they were hired greater 
+//than all of ther hire_dates of employees who work in the maintenance department
+SELECT *
+FROM employees
+WHERE department = ANY(SELECT department FROM departments WHERE division = 'kids')
+AND hire_date > ALL (SELECT hire_date FROM employees WHERE department = 'Maintenance');
+
+//Selecting Highest salary by ordering descending then keeping the top value
+SELECT salary
+FROM employees
+GROUP BY salary
+HAVING COUNT(*) >= ALL(SELECT COUNT(*) FROM employees GROUP BY salary)
+ORDER BY salary DESC
+LIMIT 1;
+
+===============================
+Conditional Expressions with CASE Clause usage
+====================================
+
+//Returns first name, salary and a under paid / paid well column
+SELECT first_name, salary,
+CASE
+	WHEN salary < 100000 THEN 'UNDER PAID'
+	WHEN salary < 100000 THEN 'PAID WELL'
+END
+FROM employees
+ORDER BY salary DESC;
+
+//Same as above but added ELSE if there is no salary then return unpaid for them
+SELECT first_name, salary,
+CASE
+	WHEN salary < 100000 THEN 'UNDER PAID'
+	WHEN salary < 100000 THEN 'PAID WELL'
+	ELSE 'UNPAID'
+END
+FROM employees
+ORDER BY salary DESC;
+
+//Same as above but further in depth with the CASE clause
+SELECT first_name, salary,
+CASE
+	WHEN salary < 100000 THEN 'UNDER PAID'
+	WHEN salary < 100000 AND salary < 160000 THEN 'PAID WELL'
+	WHEN salary > 160000 THEN 'EXECUTIVE'
+	ELSE 'UNPAID'
+END
+FROM employees
+ORDER BY salary DESC;
+
+//Adding in alias and changing to count
+//This gives you a cound of each of the 3 selections - under paid, paid well, and executive
+SELECT a.catergory, COUNT(*) FROM(
+SELECT first_name, salary,
+CASE
+	WHEN salary < 100000 THEN 'UNDER PAID'
+	WHEN salary < 100000 AND salary < 160000 THEN 'PAID WELL'
+	WHEN salary > 160000 THEN 'EXECUTIVE'
+	ELSE 'UNPAID'
+END
+FROM employees
+ORDER BY salary DESC
+	) a
+GROUP BY a.catergory;
+
+//Gives you under paid, paid well and executive as totals in one row with column headers
+SELECT SUM(CASE WHEN salary < 100000 THEN 1 ELSE 0 END) AS under_paid,
+SUM(CASE WHEN salary > 100000 AND salary < 160000 THEN 1 ELSE 0 END) AS paid_well,
+SUM(CASE WHEN alary > 160000 THEN 1 ELSE 0 END) AS executive
+FROM employees;
+
+========================================
+Transposing Data with CASE Clause usage
+========================================
+
+SELECT department, COUNT(*)
+FROM employees
+WHERE department IN ('Sports','Tools','Clothing','Computers')
+GROUP BY department;
+
+//Gives you just totals for each of the apartments in one row with headers
+SELECT SUM(CASE WHEN department = 'Sports' THEN 1 ELSE 0 END) AS Sports_Employees,
+SUM(CASE WHEN department = 'Tools' THEN 1 ELSE 0 END) AS Tools_Employees,
+SUM(CASE WHEN department = 'Clothing' THEN 1 ELSE 0 END) AS Clothing_Employees,
+SUM(CASE WHEN departmen = 'Computers' THEN 1 ELSE 0 END) AS Computers_Employees
+FROM employees;
+
+//Using aliasing to select countries by region
+//This gives you a total of countries from a query within a query - 1000 countries
+SELECT United_States + Asia + Canada FROM(
+SELECT COUNT(a.region_1) + COUNT(a.region_2) + COUNT(a.region_3) AS United_States,
+ COUNT(a.region_4) + COUNT(a.region_5) AS Asia,
+ COUNT(a.region_6) + COUNT(a.region_7) AS Canada
+ FROM(
+SELECT first_name,
+CASE WHEN region_id = 1 THEN (SELECT country FROM regions WHERE region_id = 1) END region_1,
+CASE WHEN region_id = 2 THEN (SELECT country FROM regions WHERE region_id = 2) END region_2,
+CASE WHEN region_id = 3 THEN (SELECT country FROM regions WHERE region_id = 3) END region_3,
+CASE WHEN region_id = 4 THEN (SELECT country FROM regions WHERE region_id = 4) END region_4,
+CASE WHEN region_id = 5 THEN (SELECT country FROM regions WHERE region_id = 5) END region_5,
+CASE WHEN region_id = 6 THEN (SELECT country FROM regions WHERE region_id = 6) END region_6,
+CASE WHEN region_id = 7 THEN (SELECT country FROM regions WHERE region_id = 7) END region_7
+	) a
+	) b;
+
+======================
+Correlated Subqueries
+======================
+
+//Gives you the name of the employees that make more than average
+//This is a normal subquery
+SELECT first_name, salary
+FROM employees
+WHERE salary > (SELECT ROUND(AVG(salary)) FROM employees);
+
+//Using aliasing with subqueries
+//Checking for employees with salary greater than average in their department.
+//The department is being related between the inner and outer employee table.
+//The inner query runs before the outter, it is nested. The inner is ran for every condition.
+SELECT first_name, salary
+FROM employees e1
+WHERER salary > (SELECT ROUND(AVG(salary))
+		 FROM employees e2 WHERE e1.department = e2.department);
+
+//Getting employee, their department, and salary vs the average salary of their department
+// Columns are as followed: first_name, department, salary, avg department salary
+SELECT first_name, department, salary, 
+(SELECT ROUND(AVG(salary))
+	FROM employees e2 WHERE e1.department = e2.department AS avg_department_salary)
+FROM employees e1;
+
+//Returns all the departments where there are more than 38 employees
+SELECT department 
+FROM departments 
+WHERE 38 < (SELECT COUNT(*)
+	    FROM employees e
+	    WHERE e.department = departments.department);
+
+//another method with aliasing
+SELECT department 
+FROM departments d
+WHERE 38 < (SELECT COUNT(*)
+	    FROM employees e
+	    WHERE e.department = d.department);
+
+//Another method with aliasing
+//This does not take distinct employees
+SELECT department
+FROM employees e1
+WHERE 38 < (SELECT COUNT(*)
+	    FROM employees e2
+	    WHERE e1.department = e2.department);
+
+//2 options to get distinct employees 
+// 1
+SELECT DISTINCT department
+FROM employees e1
+WHERE 38 < (SELECT COUNT(*)
+	    FROM employees e2
+	    WHERE e1.department = e2.department);
+
+// 2 
+SELECT department
+FROM employees e1
+WHERE 38 < (SELECT COUNT(*)
+	    FROM employees e2
+	    WHERE e1.department = e2.department)
+GROUP BY department;
+
+//This will give the highest paid employees in the departments that have more than 38 employees
+SELECT department, SELECT(MAX(salary) FROM employees WHERE department = d.department)
+FROM department d
+WHERE 38 < (SELECT COUNT(*)
+	    FROM employees e2
+	    WHERE d.department = e2.department);
+
+//Returns the department, name, salary, max for that department, min for that department for all employees
+SELECT department, first_name, salary,
+	(SELECT MAX(salary) FROM employees e2
+	 WHERE e1.department = e2.department) AS max_by_department,
+	(SELECT MIN(salary) FROM employees e2
+	 WHERE e1.department = e2.department) AS min_by_department
+FROM employees e1
+ORDER BY department
+
+//Returns department, employee name, salary, and HIGHEST or LOWEST SALARY
+SELECT department, first_name, salary,
+CASE WHEN salary = max_by_department THEN 'HIGHEST SALARY'
+     WHEN salary = min_by_department THEN 'LOWEST SALARY'
+END AS salary_in_department
+FROM(
+SELECT department, first_name, salary,
+	(SELECT MAX(salary) FROM employees e2
+	 WHERE e1.department = e2.department) AS max_by_department,
+	(SELECT MIN(salary) FROM employees e2
+	 WHERE e1.department = e2.department) AS min_by_department
+FROM employees e1
+ORDER BY department 
+	) a
+WHERE salary = max__by_department
+      OR salary = min_by_department;
+
+=======================
+Introducing Table Joins
+=======================
+
+//Getting employee name and country where the region_id from the employee table matches
+//the region_id in the region table
+SELECT first_name, country
+FROM employees, regions
+WHERE employees.region_id = regions.region_id;
+
+SELECT first_name, email, e.department, division, country
+FROM employees e, departments d, regions r
+WHERE e.department = d.department
+AND e.region_id = r.region_id
+AND email IS NOT NULL;
+
+//Returning country and the number of employees from each country
+SELECT counrty, COUNT(employee_id)
+FROM employees e, regions r
+WHERE e.region_id = r.region_id
+GROUP BY country;
+
+//You can also do this which will output the same as above
+SELECT counrty, COUNT(employee_id)
+FROM employees e, (SELECT * FROM regions) r
+WHERE e.region_id = r.region_id
+GROUP BY country;
+
+============================
+INNER and OUTTER Joins
+========================
+
+//Join both employee and region tables on the region_id
+//First name from employee table and country from region tably
+SELECT first_name, country
+FROM employees INNER JOIN regions
+ON employees.region_id = regions.region_id;
+
+//Return first name and email from employee table and department from departments table
+//Inner Joined by department 
+SELECT first_name, email, division
+FROM employees INNER JOIN departments
+ON employees.department = departments.department;
+
+//joining employee and department tables by deparmtent and employee and region tables by region_id
+//Joining 3 tables together
+//Returns first name, email, division, and country
+SELECT first_name, email, division, country
+FROM employees INNER JOIN departments
+ON employees.department = departments.dempartment
+INNER JOIN regions ON employees.region_id = regions.region_id
+WHERE email IS NOT NULL;
+
+//Returning departments that are in both employee and department table
+SELECT DISTINCT employees.department, departments.department
+FROM employees INNER JOIN departments ON employees.department = departments.department;
+
+//For LEFT and RIGHT join if there are places where there are no matches, it will return NULL values
+
+//LEFT (OUTTER) JOIN will take all of the values from the employees table and join the department table
+//departments to the employee table departments
+SELECT DISTINCT employees.department employee_department, 
+departments.department departments_department
+FROM employees LEFT JOIN departments ON employees.department = departments.department;
+
+//RIGHT (OUTTER) JOIN is the same as above but it returns all of the tables from the department table
+//and joins the employee departments to that
+SELECT DISTINCT employees.department employee_department, 
+departments.department departments_department
+FROM employees RIGHT JOIN departments ON employees.department = departments.department;
+
+//Looking for values where department from the departments table is NULL
+SELECT DISTINCT employees.department employee_department, 
+departments.department departments_department
+FROM employees LEFT JOIN departments ON employees.department = departments.department
+WHERE departments.department IS NULL;
+
+//FULL OUTTER JOIN returning all departments in the employee table
+SELECT DISTINCT employees.department employee_department
+FROM employees FULL OUTTER JOIN departments ON employees.department = departments.department;
+
+==================================
+UNION, UNION ALL, EXCEPT
+=============================
+
+//You can use UNION to stack queries
+//This returns all of the departments from both the employee and department tables
+//without duplicates
+SELECT DISTINCT department
+FROM employees
+UNION
+SELECT department
+FROM departments;
+
+//UNION ALL stacks everything and does not eliminate duplicates
+SELECT DISTINCT department
+FROM employees
+UNION ALL
+SELECT department
+FROM departments;
+
+//Has all departments in both employee and department tables including dupicates along with
+//all of the regions from the employee table
+SELECT DISTINCT department
+FROM employees
+UNION ALL
+SELECT department
+FROM departments
+UNION 
+SELECT regions
+FROM employees;
+
+//This will take the first result set and remove anything from that contained in the second result set
+SELECT DISTINCT department
+FROM employees
+EXCEPT
+SELECT department
+FROM departments;
+
+//This will give you the total employees in each department and a total row with a count
+//of all the employees at the bottom
+SELECT department, COUNT(*)
+FROM employees
+GROUP BY department
+UNION ALL
+SELECT 'TOTAL', COUNT(*)
+FROM employees;
+
+==================================
+Cartesian Product with CROSS JOIN
+==================================
+
+//This multiplies 1000 * 1000 * 24
+//Number of employees * number of employees * number of departments
+SELECTA COUNT(*) FROM (
+SELECT * 
+FROM employees a, employees b, departments
+	) sub;
+
+//This will return 24 of each record
+//1000 employees * 24 departments
+SELECT *
+FROM employees a CROSS JOIN departments b;
+
+=============================
+More Joins and Subqueries
+===========================
+
+//Returns the employee that has been working the least longest
+SELECT first_name, department, hire_date, country
+FROM employees e INNER JOIN regions r
+ON e.region_id = r.region_id
+WHERE hire_date = SELECT MIN(hire_date) FROM employees e2);
+
+//Returns the employees who has been working the longest
+SELECT first_name, department, hire_date, country
+FROM employees e INNER JOIN regions r
+ON e.region_id = r.region_id
+WHERE hire_date = SELECT MAX(hire_date) FROM employees e2);
+
+//Returns both the employee who worked the longest and shortest
+//for this there is 2 employees that started on the same date for the shortest period
+SELECT first_name, department, hire_date, country
+FROM employees e INNER JOIN regions r
+ON e.region_id = r.region_id
+WHERE hire_date = SELECT MIN(hire_date) FROM employees e2)
+UNION
+SELECT first_name, department, hire_date, country
+FROM employees e INNER JOIN regions r
+ON e.region_id = r.region_id
+WHERE hire_date = SELECT MAX(hire_date) FROM employees e2);
+
+//Same as above but we now limited the employee that worked the shortest amount of time to 1
+//so it will not return 2
+(SELECT first_name, department, hire_date, country
+FROM employees e INNER JOIN regions r
+ON e.region_id = r.region_id
+WHERE hire_date = SELECT MIN(hire_date) FROM employees e2)
+LIMIT 1)
+UNION
+SELECT first_name, department, hire_date, country
+FROM employees e INNER JOIN regions r
+ON e.region_id = r.region_id
+WHERE hire_date = SELECT MAX(hire_date) FROM employees e2);
+
+//Returns hire dates, the hired person salary, and the total salary paid to employees hired on that day
+SELECT hire_date, salary,
+(SELECT SUM(salary) FROM employees e2
+ WHERE e2.hire_date BETWEEN e.hire_date - 90 AND e.hire_date) AS spending_pattern
+FROM employees e
+ORDER BY hire_date;
+
+================================
+Creating Views vs. Inline Views
+================================
+
+//Create view
+CREATE VIEW v_employee_information AS
+SELECT first_name, email, e.department, salary, division, region, country
+FROM employees e, departments d, regions r
+WHERE e.department = d.department
+AND e.region_id = r.region_id;
+
+//See view
+//You can not insert or delete data from views
+SELECT * FROM v_employee_information;
+
+======================================
+Window Functions using OVER() clause
+=====================================
+
+//We get the first name, department, and count of that department
+SELECT first_name, department,
+COUNT(*) OVER(PARTITION BY department)
+FROM employees e2;
+
+//The above query is the same as this
+SELECT first_name, department,
+(SELECT COUNT(*) FROM employees e2 WHERE e2.department = e2.department)
+FROM employees e2
+ORDER BY department;
+
+//Returns first name, department, total number of employees in that department, 
+//and total number of employees in that employees region
+SELECT first_name, department, 
+COUNT(*) OVER(PARTITION BY department) dept_count,
+COUNT(*) OVER(PARTITION BY region_id) region_count
+FROM employees e2;
+
+//Gives you the name, department, and the total number of employees working in each department where
+//their region id = 3
+SELECT first_name, department, COUNT(*) OVER(PARTITION BY department)
+FROM employees
+WHERE region_id = 3;
+
+=================================
+Ordering Data in Window Frames
+==================================
+
+//Returns employee first names, hire date, salary, and running total of salaries
+SELECT first_name, hire_date, salary,
+SUM(salary) OVER(ORDER BY hire_date RANGE BETWEEN UNBOUNDED PRECEDING
+		 AND CURRENT ROW) AS running_total_of_salaries
+FROM employees
+ORDER BY hire_date;
+
+//Returns the same thing but the running total is by department
+SELECT first_name, hire_date, salary,
+SUM(salary) OVER(PARTITION BY deparmtent ORDER BY hire_date) AS running_total_of_salaries
+FROM employees;
+
+//Framing in an ordered way and adding adjacent salaries 
+//Adding column that adds the current salary and the last 1 row
+SELECT first_name, hire_date, department, salary,
+SUM(salary) OVER(ORDER BY hire_date ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)
+FROM employees;
+
+//Same as above but adding current to the last 3 rows
+SELECT first_name, hire_date, department, salary,
+SUM(salary) OVER(ORDER BY hire_date ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)
+FROM employees;
+
+=========================================
+RANK, FIRST_VALUE, NTILE
+=========================================
+
+//Returns first name, email, department, salary, and salary rank 
+//This is sorted by department and salary, ranks are made for each department
+SELECT first_name, email, department, salary
+RANK() OVER(PARTITION BY department ORDER BY salary DESC)
+FROM employees;
+
+//Getting all the employees ranked 8 in their department
+//Alias required here due to it being an Inline View
+SELECT * FROM(
+RANK() OVER(PARTITION BY department ORDER BY salary DESC)
+FROM employees
+	) a
+WHERE RANK = 8;
+
+//Creates 5 salary brackets for each department as evenly as possible
+SELECT first_name, email, department, salary
+NTILE(5) OVER(PARTITION BY department ORDER BY salary DESC) salary_bracket
+FROM employees;
+
+//Makes a column that holds the first salary for each department 
+SELECT first_name, email, department, salary
+first_value(salary) OVER(PARTITION BY department ORDER BY salary DESC) first_salary
+FROM employees;
+
+//Same as above but holds the 5th value rather than first
+SELECT first_name, email, department, salary
+nth_value(salary, 5) OVER(PARTITION BY department ORDER BY salary DESC) nth_salary
+FROM employees;
+
+===============================
+LEAD and LAG
+===============================
+
+//Creates a column that gives you the salary of the person after the current
+SELECT first_name, last_name, salary
+LEAD(salary) OVER() next_salary
+FROM employees;
+
+//Creates a column that gives you the salary of the person before the current
+SELECT first_name, last_name, salary
+LAG(salary) OVER() next_salary
+FROM employees;
+
+//Ordered with highest salary at the top and adds a column of the salary 
+//above the person you are looking at, or next highest salary
+SELECT department, last_name, salary
+LAG(salary) OVER(ORDER BY salary DESC) next_highest_salary
+FROM employees;
+
+//Same as above but shows the next salary under the current
+SELECT department, last_name, salary
+LEAD(salary) OVER(PARTITION BY department ORDER BY salary DESC) closest_lower_salary
+FROM employees;
+
+---------------
+Sales Data
+------------------
+
+=========================
+Rollups and Cubes
+=========================
+
+//This gives us the sum of units sold if we would group by any combination possible with these 3
+//different variables
+SELECT continent, country, city, SUM(units_sold)
+FROM sales
+GROUP BY CUBE(continent, country, city)
+
+//Gives combinations of the continent, country, and city 
+SELECT continent, country, city, SUM(units_sold)
+FROM sales
+GROUP BY ROLLUP(continent, country, city)
+
+
+
+
+
+
+
+
